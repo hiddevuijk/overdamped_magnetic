@@ -122,8 +122,8 @@ int main()
 	// normalize the flux and density
 	for(int i=0;i<nbin;++i) {
 		for(int j=0;j<nbin;++j){
-			fx[i][j] /= navg*N*bs*bs;
-			fy[i][j] /= navg*N*bs*bs;
+			fx[i][j] /= dt*navg*N*bs*bs;
+			fy[i][j] /= dt*navg*N*bs*bs;
 
 			rho[i][j] /= navg*N*bs*bs;
 		}
