@@ -110,44 +110,48 @@ int main()
 	vector<double> x(navg,0);
 	vector<double> y(navg,0);
 	vector<double> z(navg,0);
+	unsigned int nflux = 0;
+	double tf;
 	for(int n=0;n<navg;++n) {
 		if(n%nprint==0)	cout << n << '\t' << navg << endl;
 		x[n] = r[0][0];
 		y[n] = r[0][1];
 		z[n] = r[0][2];
 
-		integrate(r,dr,deriv,t,t+tsamp-dt,dt);
-		// increment time by dt s.t. 
-		// the last distplacement is dt
-		deriv(r,dr,t,dt);
-		fluxXY(fx0,fy0,r,dr,dr,bs,L,nbin,0.);	
-		fluxXY(fx1,fy1,r,dr,dr,bs,L,nbin,0.5);	
-		fluxXY(fx2,fy2,r,dr,dr,bs,L,nbin,1.);	
+		tf = t+tsamp;
+		while( (t+dt) < tf) { 
+			deriv(r,dr,t,dt);
 
-		// calculate density
+			fluxXY(fx0,fy0,r,dr,dr,bs,L,nbin,0.);	
+			fluxXY(fx1,fy1,r,dr,dr,bs,L,nbin,0.5);	
+			fluxXY(fx2,fy2,r,dr,dr,bs,L,nbin,1.);	
+			nflux += 1;
+		}
+
+		// integrate the remaining time
+		if(t<tf) 
+			deriv(r,dr,t,tf-t); 
+
 		density(r,rho,bs,L,nbin);
-
 		
 	}
 
 	// normalize the flux and density
 	for(int i=0;i<nbin;++i) {
 		for(int j=0;j<nbin;++j){
-			fx0[i][j] /= dt*navg*N*bs*bs;
-			fy0[i][j] /= dt*navg*N*bs*bs;
-			fx1[i][j] /= dt*navg*N*bs*bs;
-			fy1[i][j] /= dt*navg*N*bs*bs;
-			fx2[i][j] /= dt*navg*N*bs*bs;
-			fy2[i][j] /= dt*navg*N*bs*bs;
-
-
+			fx0[i][j] /= dt*bs*bs*nflux;
+			fy0[i][j] /= dt*bs*bs*nflux;
+			fx1[i][j] /= dt*bs*bs*nflux;
+			fy1[i][j] /= dt*bs*bs*nflux;
+			fx2[i][j] /= dt*bs*bs*nflux;
+			fy2[i][j] /= dt*bs*bs*nflux;
 
 			rho[i][j] /= navg*N*bs*bs;
 		}
 	}
 
 
-
+	cout << endl << "nflux = " << nflux << endl;
 	write_vec("x.dat",x);
 	write_vec("y.dat",y);
 	write_vec("z.dat",z);
