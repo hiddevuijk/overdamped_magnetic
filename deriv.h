@@ -64,9 +64,9 @@ void Deriv::operator() (
 		etaX = ndist(ranNR)*sqrt_dt*sqrt2;
 		etaY = ndist(ranNR)*sqrt_dt*sqrt2;
 
-		dr[i][0] += (Ap + B*etaX)*dt + A*etaY; 
-		dr[i][1] += (Bp + B*etaY)*dt - A*etaX;
-		dr[i][2] += ndist(ranNR)*sqrt_dt*sqrt2;	
+		dr[i][0] = (Ap + B*etaX)*dt + A*etaY; 
+		dr[i][1] = (Bp + B*etaY)*dt - A*etaX;
+		dr[i][2] = ndist(ranNR)*sqrt_dt*sqrt2;	
 
 		r[i][0] += dr[i][0];
 		r[i][1] += dr[i][1];
