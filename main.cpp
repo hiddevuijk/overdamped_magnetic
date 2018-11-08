@@ -32,7 +32,6 @@ int main()
 	int navg;	// number of averages
 	int seed;	// seed for the random number gen.
 	int nbin;	// number of bins
-	double a;   // where calculate flux
 	double B;	// magnetic field strength
 	double w0;	// number of periods of the magnetic field
 	double dt;	// time step for the integration
@@ -49,7 +48,6 @@ int main()
 	navg = config.read<int>("navg");
 	seed = config.read<int>("seed");
 	nbin = config.read<int>("nbin");
-	a = config.read<double>("a");
 	B = config.read<double>("B");
 	w0 = config.read<double>("w0");
 	dt = config.read<double>("dt");
@@ -66,9 +64,21 @@ int main()
 
 	// flux in the xy plane
 	// in the x direction
-	M2 fx(nbin,M1(nbin,0.));
+	M2 fx0(nbin,M1(nbin,0.));
 	// in the y direction
-	M2 fy(nbin,M1(nbin,0.));
+	M2 fy0(nbin,M1(nbin,0.));
+
+	// flux in the xy plane
+	// in the x direction
+	M2 fx1(nbin,M1(nbin,0.));
+	// in the y direction
+	M2 fy1(nbin,M1(nbin,0.));
+
+	// flux in the xy plane
+	// in the x direction
+	M2 fx2(nbin,M1(nbin,0.));
+	// in the y direction
+	M2 fy2(nbin,M1(nbin,0.));
 
 
 	// bins
@@ -110,8 +120,9 @@ int main()
 		// increment time by dt s.t. 
 		// the last distplacement is dt
 		deriv(r,dr,t,dt);
-		fluxXY(fx,fy,r,dr,dr,bs,L,nbin,a);	
-
+		fluxXY(fx0,fy0,r,dr,dr,bs,L,nbin,0.);	
+		fluxXY(fx1,fy1,r,dr,dr,bs,L,nbin,0.5);	
+		fluxXY(fx2,fy2,r,dr,dr,bs,L,nbin,1.);	
 
 		// calculate density
 		density(r,rho,bs,L,nbin);
@@ -122,8 +133,14 @@ int main()
 	// normalize the flux and density
 	for(int i=0;i<nbin;++i) {
 		for(int j=0;j<nbin;++j){
-			fx[i][j] /= dt*navg*N*bs*bs;
-			fy[i][j] /= dt*navg*N*bs*bs;
+			fx0[i][j] /= dt*navg*N*bs*bs;
+			fy0[i][j] /= dt*navg*N*bs*bs;
+			fx1[i][j] /= dt*navg*N*bs*bs;
+			fy1[i][j] /= dt*navg*N*bs*bs;
+			fx2[i][j] /= dt*navg*N*bs*bs;
+			fy2[i][j] /= dt*navg*N*bs*bs;
+
+
 
 			rho[i][j] /= navg*N*bs*bs;
 		}
@@ -136,8 +153,12 @@ int main()
 	write_vec("z.dat",z);
 	write_vec("bins.dat",bins);
 	write_mat("rho.dat",rho);
-	write_mat("fx.dat",fx);
-	write_mat("fy.dat",fy);
+	write_mat("fx0.dat",fx0);
+	write_mat("fy0.dat",fy0);
+	write_mat("fx1.dat",fx1);
+	write_mat("fy1.dat",fy1);
+	write_mat("fx2.dat",fx2);
+	write_mat("fy2.dat",fy2);
 	
 	return 0;
 
