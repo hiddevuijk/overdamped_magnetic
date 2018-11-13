@@ -93,8 +93,8 @@ int main()
 	// vectors describing the state of the system
 	M2 r(N,M1(3));
 	M2 dr(N,M1(3));
-
-
+	init_r(r,L,0.,ranNR);
+	
 	// the deriv objecs takes care of 
 	// a single step of dt
 	Deriv deriv(N,B,omega,ranNR);
