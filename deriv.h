@@ -47,25 +47,20 @@ void Deriv::operator() (
 {
 	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY;
-	double wi; // magnetic field at position ri
-	double wpi;
-	double A,B,Ap,Bp;
+	double Bi,Bpi,D;
 	for(int i=0;i<N;++i) {
 
-		wi = w(r[i]);
-		wpi = wp(r[i]);
+		Bi = w(r[i]);
+		Bpi = wp(r[i]);
 
 		
-		B = 1./(1+wi*wi);
-		A = wi*B;
-		Bp = -2*A*B*wpi;
-		Ap = wpi*(1-wi*wi)*B*B;
+		D = 1./(1+Bi*Bi);
 
 		etaX = ndist(ranNR)*sqrt_dt*sqrt2;
 		etaY = ndist(ranNR)*sqrt_dt*sqrt2;
 
-		dr[i][0] = (Ap + B*etaX)*dt + A*etaY; 
-		dr[i][1] = (Bp + B*etaY)*dt - A*etaX;
+		dr[i][0] = D*D*(1-Bi*Bi)*Bpi*dt + D*etaX + Bi*D*etaY;
+		dr[i][1] = -2*D*D*Bi*Bpi*dt + D*etaY - Bi*D*etaX;
 		dr[i][2] = ndist(ranNR)*sqrt_dt*sqrt2;	
 
 		r[i][0] += dr[i][0];
